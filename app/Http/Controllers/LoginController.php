@@ -17,7 +17,7 @@ class LoginController extends Controller
             'password' => 'required'
         ]);
         // Log::info('Raw request data:', $req->all());
-
+        
         $credentials = $req->only('username_or_email', 'password');
         $user = User::where('username',$credentials['username_or_email'])
         ->orWhere('email',$credentials['username_or_email'])

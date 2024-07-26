@@ -28,10 +28,10 @@ Route::middleware(['auth:sanctum', 'token.valid'])->group(function () {
     Route::post('logout', [LoginController::class, 'logout']);
     Route::resource('product', ProductController::class);
     Route::resource('productCategory', ProductCategoryController::class);
-    Route::resource('order', OrderController::class);
     Route::resource('user', UserController::class);
 });
 
+Route::resource('order', OrderController::class);
 
 
 
