@@ -59,7 +59,28 @@ class OrderController extends Controller
 
         $order->update(['totalPrice' => $totalPrice]);
 
-        return response()->json(['orderId' => $order->orderId, 'message' => 'Order Successfully Created'],404);
+        \Midtrans\Config::$serverKey = config('midtrans.server_key');
+        \Midtrans\Config::$isProduction = false;
+        \Midtrans\Config::$isSanitized = true;
+        \Midtrans\Config::$is3ds = true;
+
+        $uniqueOrderId = $order->orderId . '_' . time();
+
+        // Menyiapkan parameter transaksi Midtrans
+        $params = array(
+            'transaction_details' => array(
+                'order_id' => $uniqueOrderId, // Menggunakan ID pesanan yang diterima
+                'gross_amount' => $totalPrice,
+            )
+        );
+
+        // Mendapatkan Snap Token dengan parameter yang sesuai
+        $snapToken = \Midtrans\Snap::getSnapToken($params);
+
+        return response()->json([
+            'snapToken' => $snapToken,
+            'orderId' => $order->orderId, 'message' => 'Order Successfully Created'
+        ]);
     }
 
     /**
