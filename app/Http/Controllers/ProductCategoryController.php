@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\productCategory;
+use Illuminate\Support\Facades\Log;
 
 class ProductCategoryController extends Controller
 {
@@ -68,16 +69,17 @@ class ProductCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $req, string $id)
     {
         $productC = productCategory::find($id);
 
         if ($productC) {
-            $request->validate([
+            $req->validate([
                 'productCategoryName'=>'required'
             ]);
 
-            $productC->update($request->all());
+            $productC->update($req->all());
+            Log::info('Request data:', $req->all());
 
             return response()->json(['status' => 1, 'message' => 'Product Category updated successfully']);
         } else {

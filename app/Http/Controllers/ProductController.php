@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -24,16 +26,26 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $req)
     {
-        $request->validate([
+        $req->validate([
             'productCategoryId' => 'required',
             'productName' => 'required',
             'productPrice' => 'required',
-            'productStock' => 'required'
+            'productStock' => 'required',
+            'productImage' => 'required|image|max:2048'
         ]);
 
-        $product = Product::create($request->all());
+        $data = $req->all();
+        if($req->hasFile('productImage')) {
+            $path = $req->file('productImage')->store('public/image/products');
+            $data['productImage'] = basename($path);
+        }
+
+        $data['productCreatedUserId'] = auth()->user()->userId;
+
+
+        $product = Product::create($data);
 
         if ($product) {
             return response()->json(['status' => 1, 'message' => 'Product Successfully Created']);
@@ -67,19 +79,30 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $req, string $id)
     {
         $product = Product::find($id);
 
         if ($product) {
-            $request->validate([
-                'productCategoryId' => 'required',
-                'productName' => 'required',
-                'productPrice' => 'required',
-                'productStock' => 'required'
+            $req->validate([
+                'productCategoryId' => 'sometimes',
+                'productName' => 'sometimes',
+                'productPrice' => 'sometimes',
+                'productStock' => 'sometimes',
+                'productImage' => 'sometimes|image|max:2048'
             ]);
 
-            $product->update($request->all());
+            $data = $req->all();
+            if($req->hasFile('productImage')) {
+                if($product->productImage){
+                    Storage::delete('public/image/products' . $product->productImage);
+                }
+                $path = $req->file('productImage')->store('public/image/products');
+                $data['productImage'] = basename($path);
+            }
+
+            $data['productModUserId'] = auth()->user()->userId;
+            $product->update($data);
 
             return response()->json(['status' => 1, 'message' => 'Product updated successfully']);
         } else {
@@ -94,7 +117,11 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
 
+
         if ($product) {
+            if($product->productImage){
+                Storage::delete('public/image/products' . $product->productImage);
+            }
             $product->delete();
             return response()->json(['status' => 1, 'message' => 'Product deleted successfully']);
         } else {
