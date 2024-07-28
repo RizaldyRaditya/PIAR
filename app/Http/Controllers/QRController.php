@@ -33,7 +33,7 @@ class QRController extends Controller
         // Display the authentication page
         return view('authenticate');
     }
-
+    
     public function generateToken(Request $request)
     {
         // Generate a new order token

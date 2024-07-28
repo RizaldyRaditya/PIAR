@@ -22,7 +22,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-//Route::get('/generate-qrcode', [QRController::class, 'generate'])->name('generate.qrcode');
+Route::get('/generate-qrcode', [QRController::class, 'generate'])->name('generate.qrcode');
 Route::get('/authenticate', [QRController::class, 'authenticate'])->name('authenticate');
 Route::post('/generate-token', [QRController::class, 'generateToken'])->name('generate.token');
 Route::get('/order-page', [QRController::class, 'order'])->name('order.page');
