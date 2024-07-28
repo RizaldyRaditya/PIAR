@@ -11,7 +11,12 @@ class product extends Model
     protected $table = 'product';
     protected $primaryKey = 'productId';
     protected $fillable = [
-        'productCategoryId','productName','productPrice','productStock','productImage','productCreatedUserId','productModUserId'
+        'productCategoryId','productName','productPrice','productImage','productCreatedUserId','productModUserId'
     ];
     public $timestamps = false;
+
+    public function vendingMachines()
+    {
+        return $this->belongsToMany(VendingMachine::class, 'vendingmachineproduct')->withPivot('productStock')->withTimestamps();
+    }
 }

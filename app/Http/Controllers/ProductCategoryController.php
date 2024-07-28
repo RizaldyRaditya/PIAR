@@ -38,9 +38,9 @@ class ProductCategoryController extends Controller
         productCategory::create($req->all());
 
         if($req){
-            return Response()->json(['status'=> 1]);
+            return Response()->json(['message' => 'productCategory Successfully Created']);
         } else {
-            return Response()->json(['status'=> 0]);
+            return Response()->json(['message' => 'productCategory Failed to Create']);
         }
     }
 

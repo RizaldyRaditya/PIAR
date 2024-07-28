@@ -11,7 +11,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::all();
+        $products = Product::with('vendingMachines')->get();
         return response()->json($products);
     }
 
@@ -32,7 +32,6 @@ class ProductController extends Controller
             'productCategoryId' => 'required',
             'productName' => 'required',
             'productPrice' => 'required',
-            'productStock' => 'required',
             'productImage' => 'required|image|max:2048'
         ]);
 
@@ -42,7 +41,7 @@ class ProductController extends Controller
             $data['productImage'] = basename($path);
         }
 
-        $data['productCreatedUserId'] = auth()->user()->userId;
+       // $data['productCreatedUserId'] = auth()->user()->userId;
 
 
         $product = Product::create($data);
@@ -88,7 +87,6 @@ class ProductController extends Controller
                 'productCategoryId' => 'sometimes',
                 'productName' => 'sometimes',
                 'productPrice' => 'sometimes',
-                'productStock' => 'sometimes',
                 'productImage' => 'sometimes|image|max:2048'
             ]);
 
@@ -101,7 +99,7 @@ class ProductController extends Controller
                 $data['productImage'] = basename($path);
             }
 
-            $data['productModUserId'] = auth()->user()->userId;
+            //$data['productModUserId'] = auth()->user()->userId;
             $product->update($data);
 
             return response()->json(['status' => 1, 'message' => 'Product updated successfully']);

@@ -24,7 +24,7 @@ class QRController extends Controller
         Log::info('Generated QR Code', ['url' => $url, 'session' => Session::all()]);
 
         // Display QR code in a view along with the URL
-        //return view('qrcode', compact('qrCode', 'url'));
+    return view('qrcode', compact('qrCode', 'url'));
         return response()->json(["qrcode" => $base64QrCode]);
     }
 
@@ -33,7 +33,7 @@ class QRController extends Controller
         // Display the authentication page
         return view('authenticate');
     }
-    
+
     public function generateToken(Request $request)
     {
         // Generate a new order token
